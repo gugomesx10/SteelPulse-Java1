@@ -1,19 +1,160 @@
-SteelPulse-Java
+# 🩺 SteelPulse-Java
 
-SteelPulse-Java é uma aplicação desenvolvida em Java utilizando o framework Quarkus, que tem como objetivo o gerenciamento de dados de pacientes e contratos de planos de saúde. O sistema permite realizar operações de criação, consulta e atualização tanto de pacientes quanto dos contratos associados a eles.
+SteelPulse-Java é uma aplicação desenvolvida em **Java** utilizando o framework **[Quarkus](https://quarkus.io/)**, com o objetivo de realizar o **gerenciamento de pacientes, contratos de planos de saúde e exames associados**.  
+O sistema segue uma arquitetura limpa, com separação clara de camadas (`domain`, `application`, `infrastructure`) e persistência via **JDBC** em banco de dados **Oracle**.
 
-O que foi feito
+---
 
-A aplicação foi construída para realizar a integração com o banco de dados Oracle e foi desenvolvida com uma estrutura baseada em JDBC para persistência de dados. As funcionalidades principais incluem a criação de pacientes, onde informações como nome, CPF, telefone e endereço são armazenadas, além de permitir a criação de contratos de planos de saúde e o gerenciamento de exames associados.
+## 🚀 Visão Geral
 
-Além disso, foi implementada uma camada de repositório para persistir e consultar os dados de pacientes e contratos, utilizando a arquitetura Repository. Também foram criados testes automatizados com o uso de JUnit 5 para garantir a qualidade do código.
+A aplicação foi construída com foco em modularidade, performance e escalabilidade.  
+Ela permite realizar operações completas de **CRUD (Create, Read, Update, Delete)** tanto para **Pacientes** quanto para **Contratos**, utilizando uma camada de repositório que abstrai a lógica de persistência e garante a integridade dos dados.
 
-Funcionalidades
+---
 
-Cadastro de Pacientes: A aplicação permite o cadastro de pacientes, incluindo dados pessoais como nome, CPF, email e endereço.
+## 🧩 Principais Funcionalidades
 
-Gestão de Contratos: Cada paciente pode ter um contrato com um plano de saúde, que também pode ser consultado.
+### 🧠 Pacientes
+- **Cadastro de Pacientes** com dados pessoais: nome, CPF, telefone, email e endereço.
+- **Consulta individual** de paciente via CPF.
+- **Listagem geral** de pacientes cadastrados.
+- **Atualização e exclusão** de dados de paciente.
+- **Controle de status (ativo/inativo)**.
 
-Consulta de Pacientes e Contratos: Através do CPF do paciente, é possível buscar os dados cadastrados e seus contratos.
+### 📄 Contratos
+- **Associação de Contratos** de plano de saúde a um paciente.
+- **Criação e edição** de contratos com data de início e término.
+- **Vinculação de Exames** ao contrato.
+- **Busca de contrato ativo** e histórico de contratos por CPF.
+- **Finalização de contrato** (com atualização de status e versão).
 
-O projeto está configurado para ser escalável, permitindo a adição de novas funcionalidades no futuro, como a implementação de mais tipos de exames e planos de saúde.
+---
+
+## ⚙️ Arquitetura
+
+A aplicação segue o padrão em camadas:
+
+br.com.fiap.steelpulse
+│
+├── domain
+│ ├── model → Entidades do domínio (Paciente, Contrato, Exame, etc.)
+│ ├── repository → Interfaces de persistência
+│ ├── service → Interfaces de regras de negócio
+│ └── exceptions → Exceções específicas do domínio
+│
+├── application
+│ └── service → Implementações das regras de negócio (ServiceImpl)
+│
+├── infrastructure
+│ ├── api.rest → Controladores REST (ex: PacienteRestController)
+│ ├── persistence → Implementações JDBC (ex: JdbcPacienteRepository)
+│ ├── exceptions → Exceções de infraestrutura (erros SQL, conexões, etc.)
+│ └── config → Configurações de conexão (DatabaseConnection)
+│
+└── resources
+└── application.properties
+
+
+---
+
+## 🧪 Tecnologias Utilizadas
+
+| Categoria | Tecnologias |
+|------------|--------------|
+| **Linguagem** | Java 17 |
+| **Framework** | Quarkus |
+| **Banco de Dados** | Oracle Database |
+| **Persistência** | JDBC puro |
+| **Testes** | JUnit 5 |
+| **Padrões de Projeto** | Repository, DAO, MVC |
+| **Build Tool** | Maven |
+
+---
+
+## 🔗 Endpoints Principais
+
+### 🩸 Pacientes
+| Método | Endpoint | Descrição |
+|---------|-----------|------------|
+| `POST` | `/pacientes` | Cria um novo paciente |
+| `GET` | `/pacientes` | Lista todos os pacientes |
+| `GET` | `/pacientes/{cpf}` | Busca paciente pelo CPF |
+| `PUT` | `/pacientes/{cpf}` | Atualiza os dados de um paciente |
+| `DELETE` | `/pacientes/{cpf}` | Exclui um paciente pelo CPF |
+| `GET` | `/pacientes/status` | Verifica status da API |
+
+### 📄 Contratos
+| Método | Endpoint | Descrição |
+|---------|-----------|------------|
+| `POST` | `/contratos` | Cria um contrato associado a um paciente |
+| `GET` | `/contratos/{id}` | Consulta um contrato pelo ID |
+| `GET` | `/contratos/paciente/{cpf}` | Lista contratos de um paciente |
+| `GET` | `/contratos/paciente/{cpf}/ativo` | Retorna o contrato ativo |
+| `PUT` | `/contratos/finalizar/{id}` | Finaliza (encerra) um contrato |
+
+---
+
+## 🧱 Banco de Dados
+
+O banco de dados Oracle contém as principais tabelas:
+
+```sql
+CREATE TABLE PACIENTE (
+  NOME VARCHAR2(100),
+  CPF VARCHAR2(11) PRIMARY KEY,
+  TELEFONE VARCHAR2(20),
+  EMAIL VARCHAR2(100),
+  ANO_NASCIMENTO NUMBER,
+  ATIVO BOOLEAN,
+  VERSION NUMBER,
+  CEP VARCHAR2(15),
+  NUMERO VARCHAR2(10),
+  COMPLEMENTO VARCHAR2(100),
+  CREATED_AT TIMESTAMP,
+  LAST_UPDATE TIMESTAMP
+);
+
+CREATE TABLE CONTRATO (
+  ID NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  CPF VARCHAR2(11),
+  DATA_INICIO TIMESTAMP,
+  DATA_FIM TIMESTAMP,
+  VERSION NUMBER,
+  CREATED_AT TIMESTAMP,
+  LAST_UPDATE TIMESTAMP
+);
+
+CREATE TABLE EXAME (
+  ID NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  CONTRATO_ID NUMBER,
+  TIPO VARCHAR2(50),
+  DATA_EXAME TIMESTAMP,
+  RESULTADO VARCHAR2(200),
+  CONTRATO_VERSION NUMBER,
+  CREATED_AT TIMESTAMP,
+  LAST_UPDATE TIMESTAMP
+);
+
+🧰 Execução do Projeto
+🧾 Requisitos
+
+JDK 17+
+
+Maven 3.9+
+
+Banco de dados Oracle em execução
+
+Quarkus CLI (opcional)
+
+▶️ Rodando em modo dev
+./mvnw quarkus:dev
+
+Acesse:
+http://localhost:8080/q/dev/
+
+🧪 Testes
+
+Os testes foram implementados com JUnit 5 e cobrem as operações de criação, leitura e atualização das entidades principais:
+./mvnw test
+
+
