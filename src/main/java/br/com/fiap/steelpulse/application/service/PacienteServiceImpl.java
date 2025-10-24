@@ -5,6 +5,8 @@ import br.com.fiap.steelpulse.domain.model.Paciente;
 import br.com.fiap.steelpulse.domain.repository.PacienteRepository;
 import br.com.fiap.steelpulse.domain.service.PacienteService;
 
+import java.util.List;
+
 public class PacienteServiceImpl implements PacienteService {
 
     private final PacienteRepository pacienteRepository;
@@ -26,5 +28,25 @@ public class PacienteServiceImpl implements PacienteService {
 
     @Override
     public void desativar(Long id, Long version) {
+    }
+
+    @Override
+    public List<Paciente> listar() {
+        return List.of();
+    }
+
+    @Override
+    public Paciente buscarPorCpf(String cpf) {
+        return null;
+    }
+
+    @Override
+    public Paciente atualizar(String cpf, Paciente paciente) {
+        return null;
+    }
+
+    @Override
+    public void deletar(String cpf) {
+
     }
 }

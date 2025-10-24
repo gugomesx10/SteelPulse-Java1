@@ -9,6 +9,13 @@ public interface PacienteRepository {
     Paciente buscarPorCpf(String cpf) throws EntidadeNaoLocalizada;
     Paciente editar(Paciente paciente);
     List<Paciente> buscarTodos();
+
+    Paciente atualizar(String cpf, Paciente paciente);
+
+    void deletar(String cpf);
+
+    List<Paciente> listarTodos();
+
     void desativar(String cpf, Long versao);
     void reativar(String cpf, Long versao);
 }
