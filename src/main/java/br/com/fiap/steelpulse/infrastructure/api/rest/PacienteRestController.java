@@ -82,18 +82,36 @@ public class PacienteRestController {
     public Response buscarPorCpf(@PathParam("cpf") String cpf) {
         try {
             Paciente paciente = this.pacienteController.buscarPorCpf(cpf);
+
             if (paciente == null) {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .entity(Map.of("erro", "Paciente não encontrado com CPF: " + cpf))
+                        .entity(Map.of(
+                                "erro", "Paciente não encontrado",
+                                "cpf", cpf
+                        ))
                         .build();
             }
+
             return Response.ok(paciente).build();
-        } catch (RuntimeException e) {
+
+        } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Map.of("erro", e.getMessage()))
+                    .entity(Map.of(
+                            "erro", "CPF inválido",
+                            "detalhe", e.getMessage()
+                    ))
+                    .build();
+
+        } catch (RuntimeException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of(
+                            "erro", "Erro interno ao buscar paciente",
+                            "detalhe", e.getMessage()
+                    ))
                     .build();
         }
     }
+
 
     /**
      * Atualiza os dados de um paciente

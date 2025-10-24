@@ -134,7 +134,7 @@ CREATE TABLE EXAME (
   CREATED_AT TIMESTAMP,
   LAST_UPDATE TIMESTAMP
 );
-
+```
 🧰 Execução do Projeto
 🧾 Requisitos
 
@@ -156,5 +156,6 @@ http://localhost:8080/q/dev/
 
 Os testes foram implementados com JUnit 5 e cobrem as operações de criação, leitura e atualização das entidades principais:
 ./mvnw test
+
 
 

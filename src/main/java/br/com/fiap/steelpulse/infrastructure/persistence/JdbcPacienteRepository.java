@@ -33,12 +33,18 @@ public class JdbcPacienteRepository implements PacienteRepository {
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            // 🔹 Normaliza CPF antes de gravar
+            String cpf = paciente.getCpf().replaceAll("[^0-9]", "");
+
             stmt.setString(1, paciente.getNome());
-            stmt.setString(2, paciente.getCpf());
+            stmt.setString(2, cpf);
             stmt.setString(3, paciente.getTelefone());
             stmt.setString(4, paciente.getEmail());
             stmt.setInt(5, paciente.getAnoNascimento());
-            stmt.setBoolean(6, paciente.isAtivo());
+
+            // 🔹 Grava 'Y' ou 'N' em vez de boolean
+            stmt.setString(6, paciente.isAtivo() ? "Y" : "N");
+
             stmt.setLong(7, paciente.getVersao());
             stmt.setString(8, paciente.getEndereco().getCep());
             stmt.setString(9, paciente.getEndereco().getNumero());
@@ -69,20 +75,27 @@ public class JdbcPacienteRepository implements PacienteRepository {
                 SELECT NOME, CPF, TELEFONE, EMAIL, ANO_NASCIMENTO, ATIVO, VERSION,
                        CEP, NUMERO, COMPLEMENTO
                 FROM PACIENTE
-                WHERE CPF = ?
+                WHERE TRIM(CP)F = ?
                 """;
 
         try (Connection conn = databaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, cpf);
+            // 🔹 Remove pontos e traços
+            cpf = cpf.replaceAll("[^0-9]", "");
+            stmt.setString(1, cpf.trim());
+
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String nome = rs.getString("NOME");
                     String telefone = rs.getString("TELEFONE");
                     String email = rs.getString("EMAIL");
                     Integer anoNascimento = rs.getInt("ANO_NASCIMENTO");
-                    Boolean ativo = rs.getBoolean("ATIVO");
+
+                    // 🔹 Corrige conversão do campo ATIVO (CHAR → boolean)
+                    String ativoStr = rs.getString("ATIVO");
+                    Boolean ativo = ativoStr != null && ativoStr.equalsIgnoreCase("Y");
+
                     Long versao = rs.getLong("VERSION");
                     String cep = rs.getString("CEP");
                     String numero = rs.getString("NUMERO");
@@ -93,23 +106,13 @@ public class JdbcPacienteRepository implements PacienteRepository {
                     paciente.incrementarVersao();
                     return paciente;
                 } else {
-                    throw new EntidadeNaoLocalizada("Paciente não encontrado com CPF: " + cpf);
+                    return null; // controlador tratará 404
                 }
             }
 
-        } catch (SQLException | EntidadeNaoLocalizada e) {
-            throw new InfraestruturaException("Erro ao buscar paciente por CPF", e);
+        } catch (SQLException e) {
+            throw new InfraestruturaException("Erro ao buscar paciente por CPF: " + e.getMessage(), e);
         }
-    }
-
-    @Override
-    public Paciente editar(Paciente paciente) {
-        return null;
-    }
-
-    @Override
-    public List<Paciente> buscarTodos() {
-        return List.of();
     }
 
     /**
@@ -131,12 +134,12 @@ public class JdbcPacienteRepository implements PacienteRepository {
             stmt.setString(2, paciente.getTelefone());
             stmt.setString(3, paciente.getEmail());
             stmt.setInt(4, paciente.getAnoNascimento());
-            stmt.setBoolean(5, paciente.isAtivo());
+            stmt.setString(5, paciente.isAtivo() ? "Y" : "N");
             stmt.setString(6, paciente.getEndereco().getCep());
             stmt.setString(7, paciente.getEndereco().getNumero());
             stmt.setString(8, paciente.getEndereco().getComplemento());
             stmt.setTimestamp(9, new Timestamp(System.currentTimeMillis()));
-            stmt.setString(10, cpf);
+            stmt.setString(10, cpf.replaceAll("[^0-9]", ""));
 
             int rows = stmt.executeUpdate();
             if (rows == 0) {
@@ -150,36 +153,16 @@ public class JdbcPacienteRepository implements PacienteRepository {
     }
 
     /**
-     * Deleta um paciente pelo CPF.
-     */
-    @Override
-    public void deletar(String cpf) {
-        String sql = "DELETE FROM PACIENTE WHERE CPF = ?";
-
-        try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cpf);
-            int rows = stmt.executeUpdate();
-            if (rows == 0) {
-                throw new EntidadeNaoLocalizada("Paciente não encontrado para exclusão: " + cpf);
-            }
-
-        } catch (SQLException | EntidadeNaoLocalizada e) {
-            throw new InfraestruturaException("Erro ao deletar paciente", e);
-        }
-    }
-
-    /**
      * Lista todos os pacientes cadastrados.
      */
     @Override
     public List<Paciente> listarTodos() {
         String sql = """
-                SELECT NOME, CPF, TELEFONE, EMAIL, ANO_NASCIMENTO, ATIVO, VERSION,
-                       CEP, NUMERO, COMPLEMENTO
-                FROM PACIENTE ORDER BY NOME
-                """;
+        SELECT NOME, CPF, TELEFONE, EMAIL, ANO_NASCIMENTO, ATIVO, VERSION,
+               CEP, NUMERO, COMPLEMENTO
+        FROM PACIENTE
+        ORDER BY NOME
+        """;
 
         List<Paciente> pacientes = new ArrayList<>();
 
@@ -193,7 +176,7 @@ public class JdbcPacienteRepository implements PacienteRepository {
                 String telefone = rs.getString("TELEFONE");
                 String email = rs.getString("EMAIL");
                 Integer anoNascimento = rs.getInt("ANO_NASCIMENTO");
-                Boolean ativo = rs.getBoolean("ATIVO");
+                Boolean ativo = "Y".equalsIgnoreCase(rs.getString("ATIVO"));
                 Long versao = rs.getLong("VERSION");
                 String cep = rs.getString("CEP");
                 String numero = rs.getString("NUMERO");
@@ -201,6 +184,7 @@ public class JdbcPacienteRepository implements PacienteRepository {
 
                 Endereco endereco = new Endereco(cep, numero, complemento);
                 Paciente paciente = new Paciente(nome, cpf, ativo, email, anoNascimento, endereco);
+                paciente.incrementarVersao();
                 pacientes.add(paciente);
             }
 
@@ -211,14 +195,36 @@ public class JdbcPacienteRepository implements PacienteRepository {
         return pacientes;
     }
 
+
     /**
-     * Desativa um paciente (muda o campo ativo para false).
+     * Deleta um paciente pelo CPF.
+     */
+    @Override
+    public void deletar(String cpf) {
+        String sql = "DELETE FROM PACIENTE WHERE CPF = ?";
+
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf.replaceAll("[^0-9]", ""));
+            int rows = stmt.executeUpdate();
+            if (rows == 0) {
+                throw new EntidadeNaoLocalizada("Paciente não encontrado para exclusão: " + cpf);
+            }
+
+        } catch (SQLException | EntidadeNaoLocalizada e) {
+            throw new InfraestruturaException("Erro ao deletar paciente", e);
+        }
+    }
+
+    /**
+     * Desativa um paciente (ATIVO = 'N').
      */
     @Override
     public void desativar(String cpf, Long versao) {
         String sql = """
                 UPDATE PACIENTE
-                SET ATIVO = FALSE, VERSION = ?, LAST_UPDATE = ?
+                SET ATIVO = 'N', VERSION = ?, LAST_UPDATE = ?
                 WHERE CPF = ? AND VERSION = ?
                 """;
 
@@ -228,7 +234,7 @@ public class JdbcPacienteRepository implements PacienteRepository {
             Timestamp now = new Timestamp(System.currentTimeMillis());
             stmt.setLong(1, versao);
             stmt.setTimestamp(2, now);
-            stmt.setString(3, cpf);
+            stmt.setString(3, cpf.replaceAll("[^0-9]", ""));
             stmt.setLong(4, versao - 1);
 
             int rows = stmt.executeUpdate();
@@ -242,13 +248,13 @@ public class JdbcPacienteRepository implements PacienteRepository {
     }
 
     /**
-     * Reativa um paciente (muda o campo ativo para true).
+     * Reativa um paciente (ATIVO = 'Y').
      */
     @Override
     public void reativar(String cpf, Long versao) {
         String sql = """
                 UPDATE PACIENTE
-                SET ATIVO = TRUE, VERSION = ?, LAST_UPDATE = ?
+                SET ATIVO = 'Y', VERSION = ?, LAST_UPDATE = ?
                 WHERE CPF = ? AND VERSION = ?
                 """;
 
@@ -258,7 +264,7 @@ public class JdbcPacienteRepository implements PacienteRepository {
             Timestamp now = new Timestamp(System.currentTimeMillis());
             stmt.setLong(1, versao);
             stmt.setTimestamp(2, now);
-            stmt.setString(3, cpf);
+            stmt.setString(3, cpf.replaceAll("[^0-9]", ""));
             stmt.setLong(4, versao - 1);
 
             int rows = stmt.executeUpdate();
@@ -269,5 +275,15 @@ public class JdbcPacienteRepository implements PacienteRepository {
         } catch (SQLException | EntidadeNaoLocalizada e) {
             throw new InfraestruturaException("Erro ao reativar paciente", e);
         }
+    }
+
+    @Override
+    public Paciente editar(Paciente paciente) {
+        return null;
+    }
+
+    @Override
+    public List<Paciente> buscarTodos() {
+        return listarTodos();
     }
 }
