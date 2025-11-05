@@ -1,11 +1,10 @@
 package br.com.fiap.steelpulse.infrastructure.config;
 
-import br.com.fiap.steelpulse.domain.repository.PacienteRepository;
-import br.com.fiap.steelpulse.domain.repository.ContratoRepository;
-import br.com.fiap.steelpulse.infrastructure.persistence.DatabaseConnection;
-import br.com.fiap.steelpulse.infrastructure.persistence.DatabaseConnectionImpl;
-import br.com.fiap.steelpulse.infrastructure.persistence.JdbcPacienteRepository;
-import br.com.fiap.steelpulse.infrastructure.persistence.JdbcContratoRepository;
+import br.com.fiap.steelpulse.domain.repository.AcessoRepository;
+import br.com.fiap.steelpulse.domain.repository.AgendamentoRepository;
+import br.com.fiap.steelpulse.domain.repository.PerguntaRepository;
+import br.com.fiap.steelpulse.domain.repository.UsuarioRepository;
+import br.com.fiap.steelpulse.infrastructure.persistence.*;
 import io.agroal.api.AgroalDataSource;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -18,13 +17,23 @@ public class DatabaseConfig {
     }
 
     @ApplicationScoped
-    public ContratoRepository contratoRepository(DatabaseConnection databaseConnection) {
-        return new JdbcContratoRepository(databaseConnection);
+    public AgendamentoRepository agendamentoRepository(DatabaseConnection databaseConnection) {
+        return new JdbcAgendamentoRepository(databaseConnection);
     }
 
     @ApplicationScoped
-    public PacienteRepository pacienteRepository(DatabaseConnection databaseConnection) {
-        return new JdbcPacienteRepository(databaseConnection);
+    public AcessoRepository acessoRepository(DatabaseConnection databaseConnection) {
+        return new JdbcAcessoRepository(databaseConnection);
+    }
+
+    @ApplicationScoped
+    public PerguntaRepository perguntaRepository(DatabaseConnection databaseConnection) {
+        return new JdbcPerguntaRepository(databaseConnection);
+    }
+
+    @ApplicationScoped
+    public UsuarioRepository usuarioRepository(DatabaseConnection databaseConnection) {
+        return new JdbcUsuarioRepository(databaseConnection);
     }
 
 }

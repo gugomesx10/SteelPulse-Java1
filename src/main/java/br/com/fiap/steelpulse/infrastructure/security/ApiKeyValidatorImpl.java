@@ -1,19 +1,18 @@
 package br.com.fiap.steelpulse.infrastructure.security;
 
 import br.com.fiap.steelpulse.application.service.ApiKeyValidator;
+import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+@ApplicationScoped
 public class ApiKeyValidatorImpl implements ApiKeyValidator {
 
-    private final String validApiKey;
-
-    public ApiKeyValidatorImpl(String validApiKey) {
-        this.validApiKey = validApiKey;
-    }
+    @ConfigProperty(name = "api.key")
+    String validApiKey;
 
     @Override
     public boolean isValid(String apiKey) {
-        if (!isPresent(apiKey)) return false;
-        return this.validApiKey.equals(apiKey);
+        return apiKey != null && validApiKey.equals(apiKey);
     }
 
     @Override
