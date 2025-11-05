@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import br.com.fiap.steelpulse.mapper.AutenticacaoMapper;
 
-@Path("/acesso")
+@Path("/autenticacao")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AutenticacaoRestController {

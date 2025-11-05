@@ -13,7 +13,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class ServiceConfig {
 
     @ApplicationScoped
-    public AutenticacaoService acessoService(AutenticacaoRepository autenticacaoRepository) {
+    public AutenticacaoService autenticacaoService(AutenticacaoRepository autenticacaoRepository) {
         return new AutenticacaoServiceImpl(autenticacaoRepository);
     }
 
@@ -23,13 +23,13 @@ public class ServiceConfig {
     }
 
     @ApplicationScoped
-    public FormularioService perguntaService(FormularioRepository formularioRepository) {
+    public FormularioService formularioService(FormularioRepository formularioRepository) {
         return new FormularioServiceImpl(formularioRepository);
     }
 
     @ApplicationScoped
-    public PacienteService usuarioService(PacienteRepository pacienteRepository, AgendamentoRepository agendamentoRepository,
-                                          FormularioRepository formularioRepository, AutenticacaoRepository autenticacaoRepository) {
+    public PacienteService pacienteService(PacienteRepository pacienteRepository, AgendamentoRepository agendamentoRepository,
+                                           FormularioRepository formularioRepository, AutenticacaoRepository autenticacaoRepository) {
         return new PacienteServiceImpl(pacienteRepository, formularioRepository, agendamentoRepository, autenticacaoRepository);
     }
 }

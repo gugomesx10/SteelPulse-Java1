@@ -10,7 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class ControllerConfig {
 
     @ApplicationScoped
-    public AutenticacaoController acessoController(AutenticacaoService autenticacaoService) {
+    public AutenticacaoController autenticacaoController(AutenticacaoService autenticacaoService) {
         return new AutenticacaoControllerImpl(autenticacaoService);
     }
 
@@ -20,12 +20,12 @@ public class ControllerConfig {
     }
 
     @ApplicationScoped
-    public FormularioController perguntaController(FormularioService formularioService) {
+    public FormularioController formularioController(FormularioService formularioService) {
         return new FormularioControllerImpl(formularioService);
     }
 
     @ApplicationScoped
-    public PacienteController usuarioController(PacienteService pacienteService) {
+    public PacienteController pacienteController(PacienteService pacienteService) {
         return new PacienteControllerImpl(pacienteService);
     }
 }

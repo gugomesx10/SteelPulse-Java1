@@ -22,17 +22,17 @@ public class DatabaseConfig {
     }
 
     @ApplicationScoped
-    public AutenticacaoRepository acessoRepository(DatabaseConnection databaseConnection) {
+    public AutenticacaoRepository autenticacaoRepository(DatabaseConnection databaseConnection) {
         return new JdbcAutenticacaoRepository(databaseConnection);
     }
 
     @ApplicationScoped
-    public FormularioRepository perguntaRepository(DatabaseConnection databaseConnection) {
+    public FormularioRepository formularioRepository(DatabaseConnection databaseConnection) {
         return new JdbcFormularioRepository(databaseConnection);
     }
 
     @ApplicationScoped
-    public PacienteRepository usuarioRepository(DatabaseConnection databaseConnection) {
+    public PacienteRepository pacienteRepository(DatabaseConnection databaseConnection) {
         return new JdbcPacienteRepository(databaseConnection);
     }
 

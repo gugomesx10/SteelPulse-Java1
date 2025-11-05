@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcPacienteRepository implements PacienteRepository {
-    private final String tableNome = "USUARIOSAUDE";
+    private final String tableNome = "PACIENTESAUDE";
     private final DatabaseConnection databaseConnection;
 
     public JdbcPacienteRepository(DatabaseConnection databaseConnection) {
@@ -87,7 +87,7 @@ public class JdbcPacienteRepository implements PacienteRepository {
 
             connection.commit();
 
-            // Recupera o usuário atualizado
+            // Recupera o paciente atualizado
             String selectSql = "SELECT ID, NAME, EMAIL, SENHA FROM " + tableNome + " WHERE ID = ?";
             try (PreparedStatement selectStatement = connection.prepareStatement(selectSql)) {
                 selectStatement.setInt(1, id);
