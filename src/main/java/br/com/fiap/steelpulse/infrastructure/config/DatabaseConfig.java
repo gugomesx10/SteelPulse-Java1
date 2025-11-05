@@ -1,9 +1,9 @@
 package br.com.fiap.steelpulse.infrastructure.config;
 
-import br.com.fiap.steelpulse.domain.repository.AcessoRepository;
+import br.com.fiap.steelpulse.domain.repository.AutenticacaoRepository;
 import br.com.fiap.steelpulse.domain.repository.AgendamentoRepository;
-import br.com.fiap.steelpulse.domain.repository.PerguntaRepository;
-import br.com.fiap.steelpulse.domain.repository.UsuarioRepository;
+import br.com.fiap.steelpulse.domain.repository.FormularioRepository;
+import br.com.fiap.steelpulse.domain.repository.PacienteRepository;
 import br.com.fiap.steelpulse.infrastructure.persistence.*;
 import io.agroal.api.AgroalDataSource;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,18 +22,18 @@ public class DatabaseConfig {
     }
 
     @ApplicationScoped
-    public AcessoRepository acessoRepository(DatabaseConnection databaseConnection) {
-        return new JdbcAcessoRepository(databaseConnection);
+    public AutenticacaoRepository acessoRepository(DatabaseConnection databaseConnection) {
+        return new JdbcAutenticacaoRepository(databaseConnection);
     }
 
     @ApplicationScoped
-    public PerguntaRepository perguntaRepository(DatabaseConnection databaseConnection) {
-        return new JdbcPerguntaRepository(databaseConnection);
+    public FormularioRepository perguntaRepository(DatabaseConnection databaseConnection) {
+        return new JdbcFormularioRepository(databaseConnection);
     }
 
     @ApplicationScoped
-    public UsuarioRepository usuarioRepository(DatabaseConnection databaseConnection) {
-        return new JdbcUsuarioRepository(databaseConnection);
+    public PacienteRepository usuarioRepository(DatabaseConnection databaseConnection) {
+        return new JdbcPacienteRepository(databaseConnection);
     }
 
 }

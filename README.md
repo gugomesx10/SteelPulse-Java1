@@ -7,9 +7,8 @@ O sistema segue uma arquitetura limpa, com separação clara de camadas (`domain
 
 ## 🚀 Visão Geral
 
-A aplicação foi construída com foco em modularidade, performance e escalabilidade.  
-Ela permite realizar operações completas de **CRUD (Create, Read, Update, Delete)** tanto para **Pacientes** quanto para **Contratos**, utilizando uma camada de repositório que abstrai a lógica de persistência e garante a integridade dos dados.
-
+A aplicação permite o controle completo do ciclo de vida de pacientes e seus contratos, além de incluir o gerenciamento de agendamentos de consultas e exames associados.
+O foco principal é fornecer uma base sólida, modular e de fácil manutenção, com persistência via JDBC puro e Oracle Database.
 ---
 
 ## 🧩 Principais Funcionalidades

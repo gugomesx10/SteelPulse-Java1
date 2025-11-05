@@ -1,10 +1,8 @@
 package br.com.fiap.steelpulse.interfaces;
 
-import br.com.fiap.steelpulse.domain.model.Acesso;
 import br.com.fiap.steelpulse.domain.model.Agendamento;
 import br.com.fiap.steelpulse.dto.output.AgendamentoOutputDto;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
