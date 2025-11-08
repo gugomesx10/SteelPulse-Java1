@@ -1,0 +1,672 @@
+@startuml
+class br.com.fiap.steelpulse.domain.model.Autenticacao {
+- int id
+- Date dataAcesso
+- int idPagina
+- int idUsuario
++ <<Create>> Autenticacao(int,Date,int,int)
++ <<Create>> Autenticacao(Date,int)
++ int getIdUsuario()
++ void setIdUsuario(int)
++ int getId()
++ void setId(int)
++ Date getDataAcesso()
++ void setDataAcesso(Date)
++ int getIdPagina()
++ void setIdPagina(int)
+}
+
+
+class br.com.fiap.steelpulse.dto.input.AgendamentoInputDto {
+- int id
+- Date data
+- String descricao
+- int userId
+- boolean confirmado
++ <<Create>> AgendamentoInputDto(int,String,Date,int)
++ <<Create>> AgendamentoInputDto(Date,String,int,boolean)
++ <<Create>> AgendamentoInputDto()
++ <<Create>> AgendamentoInputDto(int,Date,String,int,boolean)
++ boolean isConfirmado()
++ void setConfirmado(boolean)
++ int getId()
++ void setId(int)
++ Date getData()
++ void setData(Date)
++ String getDescricao()
++ void setDescricao(String)
++ int getUserId()
++ void setUserId(int)
+}
+
+
+interface br.com.fiap.steelpulse.domain.repository.PacienteRepository {
+~ Paciente criarUsuario(String,String,String,boolean)
+~ Paciente alterarSenha(String)
+~ Paciente alterarEmail(String)
+~ Paciente alterarNome(int,String)
+~ void deletarUsuario(int)
+~ List<Paciente> listarUsuarios()
+~ Paciente getUsuarioByEmail(String)
+}
+
+interface br.com.fiap.steelpulse.interfaces.AutenticacaoController {
+~ Autenticacao createAcesso(int,int)
+~ void deletarAcesso(int)
+~ Autenticacao atualizarAcesso(int,Autenticacao)
+~ ArrayList<Autenticacao> listarAcessos()
+~ ArrayList<Autenticacao> listarAcessosPorUsuario(int)
+}
+
+class br.com.fiap.steelpulse.dto.input.PacienteInputDto {
+- int userId
+- String name
+- String email
+- String senha
+- boolean isFuncionario
++ <<Create>> PacienteInputDto(int,String,String,String,boolean)
++ void setFuncionario(boolean)
++ int getUserId()
++ void setUserId(int)
++ String getName()
++ void setName(String)
++ String getEmail()
++ void setEmail(String)
++ String getSenha()
++ void setSenha(String)
++ boolean isFuncionario()
+}
+
+
+class br.com.fiap.steelpulse.interfaces.AgendamentoControllerImpl {
+- AgendamentoService agendamentoService
++ <<Create>> AgendamentoControllerImpl(AgendamentoService)
++ Agendamento createAgendamento(String,int,Date)
++ void deletarAgendamento(int)
++ List<Agendamento> listarAgendamento()
++ void confirmarAgendamento(int)
++ List<Agendamento> listarAgendamentosPorUsuario(int)
++ List<AgendamentoOutputDto> listarAgendamentos()
+}
+
+
+interface br.com.fiap.steelpulse.application.service.ApiKeyValidator {
+~ boolean isValid(String)
+~ boolean isPresent(String)
+}
+
+interface br.com.fiap.steelpulse.interfaces.FormularioController {
+~ Formulario criarPergunta(String,String,String,String,String)
+~ Formulario responderPergunta(int,String,int)
+~ void deletarPergunta(int)
+~ ArrayList<Formulario> listarPerguntas()
+}
+
+class br.com.fiap.steelpulse.domain.model.Agendamento {
+- int id
+- Date data
+- String descricao
+- int userId
+- boolean confirmado
++ <<Create>> Agendamento()
++ <<Create>> Agendamento(int,String,Date,int)
++ <<Create>> Agendamento(Date,String,int,boolean)
++ <<Create>> Agendamento(int,Date,String,int,boolean)
++ int getId()
++ void setId(int)
++ Date getData()
++ void setData(Date)
++ String getDescricao()
++ void setDescricao(String)
++ int getUserId()
++ void setUserId(int)
++ boolean isConfirmado()
++ void setConfirmado(boolean)
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.persistence.JdbcPacienteRepository {
+- String tableNome
+- DatabaseConnection databaseConnection
++ <<Create>> JdbcPacienteRepository(DatabaseConnection)
++ Paciente criarUsuario(String,String,String,boolean)
++ Paciente alterarSenha(String)
++ Paciente alterarEmail(String)
++ Paciente alterarNome(int,String)
++ void deletarUsuario(int)
++ List<Paciente> listarUsuarios()
++ Paciente getUsuarioByEmail(String)
+}
+
+
+class br.com.fiap.steelpulse.application.FormularioServiceImpl {
+- FormularioRepository formularioRepository
++ <<Create>> FormularioServiceImpl(FormularioRepository)
++ Formulario criarPergunta(String,String,String,String,String)
++ Formulario responderPergunta(int,String,int)
++ void deletarPergunta(int)
++ ArrayList<Formulario> listarPerguntas()
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.security.ApiKeyValidatorImpl {
+~ String validApiKey
++ boolean isValid(String)
++ boolean isPresent(String)
+}
+
+
+interface br.com.fiap.steelpulse.domain.service.AutenticacaoService {
+~ Autenticacao criarAcesso(int,int)
+~ Autenticacao editarAcesso(int,Autenticacao)
+~ void deletarAcesso(int)
+~ ArrayList<Autenticacao> listarAcessos()
+~ ArrayList<Autenticacao> listarAcessosPorUsuario(int)
+}
+
+class br.com.fiap.steelpulse.dto.output.PacienteOutputDto {
+- int userId
+- String name
+- String email
+- String senha
+- boolean isFuncionario
++ <<Create>> PacienteOutputDto(int,String,String,String)
++ void setFuncionario(boolean)
++ int getUserId()
++ void setUserId(int)
++ String getName()
++ void setName(String)
++ String getEmail()
++ void setEmail(String)
++ String getSenha()
++ void setSenha(String)
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.config.DatabaseConfig {
++ DatabaseConnection databaseConnection(AgroalDataSource)
++ AgendamentoRepository agendamentoRepository(DatabaseConnection)
++ AutenticacaoRepository autenticacaoRepository(DatabaseConnection)
++ FormularioRepository formularioRepository(DatabaseConnection)
++ PacienteRepository pacienteRepository(DatabaseConnection)
+}
+
+class br.com.fiap.steelpulse.infrastructure.persistence.DatabaseConnectionImpl {
+~ DataSource dataSource
+- DatabaseConnectionImpl connection
++ <<Create>> DatabaseConnectionImpl(DataSource)
++ Connection getConnection()
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.api.rest.AutenticacaoRestController {
+- AutenticacaoController autenticacaoController
++ <<Create>> AutenticacaoRestController(AutenticacaoController)
++ Response create(AutenticacaoInputDto)
++ Response update(int,AutenticacaoInputDto)
++ Response delete(int)
++ Response listAllByUser(int)
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.persistence.JdbcAutenticacaoRepository {
+- DatabaseConnection databaseConnection
++ <<Create>> JdbcAutenticacaoRepository(DatabaseConnection)
++ Autenticacao criarAcesso(Autenticacao)
++ Autenticacao editarAcesso(Autenticacao,int)
++ void deletarAcesso(int)
++ ArrayList<Autenticacao> listarAcesso()
++ ArrayList<Autenticacao> listarByIdUsuario(int)
+}
+
+
+interface br.com.fiap.steelpulse.interfaces.AgendamentoController {
+~ Agendamento createAgendamento(String,int,Date)
+~ void deletarAgendamento(int)
+~ List<Agendamento> listarAgendamento()
+~ void confirmarAgendamento(int)
+~ List<Agendamento> listarAgendamentosPorUsuario(int)
+~ List<AgendamentoOutputDto> listarAgendamentos()
+}
+
+class br.com.fiap.steelpulse.infrastructure.api.rest.FormularioRestController {
+- FormularioController formularioController
++ <<Create>> FormularioRestController(FormularioController)
++ Response create(FormularioInputDto)
++ Response update(int,RespostaInputDto)
++ Response delete(int)
++ Response listAll()
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.exceptions.LoginException {
++ <<Create>> LoginException(String)
+}
+
+class br.com.fiap.steelpulse.mapper.PacienteMapper {
++ {static} PacienteOutputDto toDto(Paciente)
++ {static} Paciente toModel(PacienteInputDto)
+}
+
+class br.com.fiap.steelpulse.infrastructure.exceptions.AgendamentoException {
++ <<Create>> AgendamentoException(String)
+}
+
+class br.com.fiap.steelpulse.mapper.AutenticacaoMapper {
++ {static} AutenticacaoOutputDto toDto(Autenticacao)
++ {static} Autenticacao toModel(AutenticacaoInputDto)
+}
+
+class br.com.fiap.steelpulse.infrastructure.security.ApiKeyFilter {
+- {static} String API_KEY_HEADER
+- ApiKeyValidator apiKeyValidator
++ <<Create>> ApiKeyFilter(ApiKeyValidator)
++ void filter(ContainerRequestContext)
+}
+
+
+class br.com.fiap.steelpulse.application.AutenticacaoServiceImpl {
+- AutenticacaoRepository autenticacaoRepository
++ <<Create>> AutenticacaoServiceImpl(AutenticacaoRepository)
++ Autenticacao criarAcesso(int,int)
++ Autenticacao editarAcesso(int,Autenticacao)
++ void deletarAcesso(int)
++ ArrayList<Autenticacao> listarAcessos()
++ ArrayList<Autenticacao> listarAcessosPorUsuario(int)
+}
+
+
+class br.com.fiap.steelpulse.interfaces.AutenticacaoControllerImpl {
+- AutenticacaoService autenticacaoService
++ <<Create>> AutenticacaoControllerImpl(AutenticacaoService)
++ Autenticacao createAcesso(int,int)
++ void deletarAcesso(int)
++ Autenticacao atualizarAcesso(int,Autenticacao)
++ ArrayList<Autenticacao> listarAcessos()
++ ArrayList<Autenticacao> listarAcessosPorUsuario(int)
+}
+
+
+interface br.com.fiap.steelpulse.domain.repository.AgendamentoRepository {
+~ void confirmarAgendamento(int)
+~ Agendamento criarAgendamento(Date,String,int)
+~ Agendamento getAgendamento(int)
+~ ArrayList<Agendamento> listarAgendamentos()
+~ void deletarAgendamento(int)
+~ List<Agendamento> listarAgendamentosPorUsuario(int)
+}
+
+class br.com.fiap.steelpulse.infrastructure.exceptions.ListagemDePacienteException {
++ <<Create>> ListagemDePacienteException(String)
+}
+
+class br.com.fiap.steelpulse.infrastructure.config.ControllerConfig {
++ AutenticacaoController autenticacaoController(AutenticacaoService)
++ AgendamentoController agendamentoController(AgendamentoService)
++ FormularioController formularioController(FormularioService)
++ PacienteController pacienteController(PacienteService)
+}
+
+class br.com.fiap.steelpulse.infrastructure.persistence.JdbcAgendamentoRepository {
+- DatabaseConnection databaseConnection
++ <<Create>> JdbcAgendamentoRepository(DatabaseConnection)
++ void confirmarAgendamento(int)
++ Agendamento criarAgendamento(Date,String,int)
++ Agendamento getAgendamento(int)
++ ArrayList<Agendamento> listarAgendamentos()
++ void deletarAgendamento(int)
++ ArrayList<Agendamento> listarAgendamentosPorUsuario(int)
+}
+
+
+class br.com.fiap.steelpulse.dto.input.FormularioInputDto {
+- int id
+- String titulo
+- String autorDaPergunta
+- String email
+- String celular
+- String assunto
+- Date data
++ <<Create>> FormularioInputDto(String,String,Date)
++ String getAssunto()
++ void setAssunto(String)
++ String getCelular()
++ void setCelular(String)
++ String getEmail()
++ void setEmail(String)
++ void setAutorDaPergunta(String)
++ String getTitulo()
++ void setTitulo(String)
++ Date getData()
++ void setData(Date)
++ int getId()
++ void setId(int)
++ String getAutorDaPergunta()
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.config.ServiceConfig {
++ AutenticacaoService autenticacaoService(AutenticacaoRepository)
++ AgendamentoService agendamentoService(AgendamentoRepository)
++ FormularioService formularioService(FormularioRepository)
++ PacienteService pacienteService(PacienteRepository,AgendamentoRepository,FormularioRepository,AutenticacaoRepository)
+}
+
+interface br.com.fiap.steelpulse.domain.service.AgendamentoService {
+~ Agendamento getAgendamento(int)
+~ Agendamento criarAgendamento(String,int,Date)
+~ ArrayList<Agendamento> listarAgendamentos()
+~ void deletarAgendamento(int)
+~ void confirmarAgendamento(int)
+~ List<Agendamento> listarAgendamentosPorUsuario(int)
+}
+
+class br.com.fiap.steelpulse.interfaces.PacienteControllerImpl {
+- PacienteService pacienteService
++ <<Create>> PacienteControllerImpl(PacienteService)
++ Paciente criarUsuario(String,String,String,boolean)
++ Paciente alterarNome(int,String)
++ Paciente alterarEmail(String)
++ ArrayList<Paciente> listarUsuarios()
++ Paciente login(String,String)
++ void deletarUsuario(int)
+}
+
+
+class br.com.fiap.steelpulse.dto.output.AgendamentoOutputDto {
+- int id
+- Date data
+- String descricao
+- int userId
+- boolean confirmado
++ <<Create>> AgendamentoOutputDto(int,String,Date,int)
++ <<Create>> AgendamentoOutputDto(Date,String,int,boolean)
++ <<Create>> AgendamentoOutputDto()
++ <<Create>> AgendamentoOutputDto(int,Date,String,int,boolean)
++ boolean isConfirmado()
++ void setConfirmado(boolean)
++ int getId()
++ void setId(int)
++ Date getData()
++ void setData(Date)
++ String getDescricao()
++ void setDescricao(String)
++ int getUserId()
++ void setUserId(int)
+}
+
+
+class br.com.fiap.steelpulse.dto.output.FormularioOutputDto {
+- int id
+- String titulo
+- String corpo
+- String autorDaPergunta
+- int autorDaReposta
+- Date data
++ <<Create>> FormularioOutputDto(String,String,Date)
++ <<Create>> FormularioOutputDto(int,String,String,String,int,Date)
++ String getTitulo()
++ String getCorpo()
++ String getAutorDaPergunta()
++ int getAutorDaReposta()
++ Date getData()
++ int getId()
++ void setId(int)
++ void responderPergunta(int,String)
+- void setAutorDaReposta(int)
+- void setResposta(String)
+}
+
+
+class br.com.fiap.steelpulse.mapper.AgendamentoMapper {
++ {static} AgendamentoOutputDto toDto(Agendamento)
++ {static} Agendamento toModel(AgendamentoInputDto)
+}
+
+class br.com.fiap.steelpulse.infrastructure.persistence.JdbcFormularioRepository {
+- DatabaseConnection databaseConnection
++ <<Create>> JdbcFormularioRepository(DatabaseConnection)
++ ArrayList<Formulario> listarPerguntas()
++ void deletarPergunta(int)
++ Formulario responderPergunta(int,String,int)
++ Formulario criarPergunta(String,String,Date,String,String,String)
+- Formulario getPerguntaById(int)
+}
+
+
+class br.com.fiap.steelpulse.domain.model.Formulario {
+- int id
+- String titulo
+- String corpo
+- String autorDaPergunta
+- int autorDaReposta
+- Date data
++ <<Create>> Formulario(String,String,Date)
++ <<Create>> Formulario(int,String,String,String,int,Date)
++ int getId()
++ void setId(int)
++ void responderPergunta(int,String)
+- void setAutorDaReposta(int)
+- void setResposta(String)
++ String getTitulo()
++ String getCorpo()
++ String getAutorDaPergunta()
++ int getAutorDaReposta()
++ Date getData()
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.exceptions.AutenticacaoException {
++ <<Create>> AutenticacaoException(String)
+}
+
+class br.com.fiap.steelpulse.infrastructure.api.rest.PacienteRestController {
+- PacienteController pacienteController
++ <<Create>> PacienteRestController(PacienteController)
++ Response create(PacienteInputDto)
++ Response update(int,PacienteInputDto)
++ Response delete(int)
++ Response listAll()
++ Response login(PacienteInputDto)
+}
+
+
+interface br.com.fiap.steelpulse.interfaces.PacienteController {
+~ Paciente criarUsuario(String,String,String,boolean)
+~ Paciente alterarNome(int,String)
+~ Paciente alterarEmail(String)
+~ ArrayList<Paciente> listarUsuarios()
+~ Paciente login(String,String)
+~ void deletarUsuario(int)
+}
+
+class br.com.fiap.steelpulse.application.PacienteServiceImpl {
+- PacienteRepository pacienteRepository
+- FormularioRepository formularioRepository
+- AgendamentoRepository agendamentoRepository
+- AutenticacaoRepository autenticacaoRepository
++ <<Create>> PacienteServiceImpl(PacienteRepository,FormularioRepository,AgendamentoRepository,AutenticacaoRepository)
++ Paciente criarUsuario(String,String,String,boolean)
++ Paciente alterarNome(int,String)
++ Paciente alterarEmail(String)
++ ArrayList<Paciente> listarUsuarios()
++ void deletarUsuario(int)
++ Paciente login(String,String)
+- boolean loginExiste(String,String)
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.exceptions.FormularioException {
++ <<Create>> FormularioException(String)
+}
+
+interface br.com.fiap.steelpulse.domain.service.FormularioService {
+~ Formulario criarPergunta(String,String,String,String,String)
+~ Formulario responderPergunta(int,String,int)
+~ void deletarPergunta(int)
+~ ArrayList<Formulario> listarPerguntas()
+}
+
+interface br.com.fiap.steelpulse.domain.service.PacienteService {
+~ Paciente criarUsuario(String,String,String,boolean)
+~ Paciente alterarNome(int,String)
+~ Paciente alterarEmail(String)
+~ ArrayList<Paciente> listarUsuarios()
+~ void deletarUsuario(int)
+~ Paciente login(String,String)
+}
+
+class br.com.fiap.steelpulse.interfaces.FormularioControllerImpl {
+- FormularioService formularioService
++ <<Create>> FormularioControllerImpl(FormularioService)
++ Formulario criarPergunta(String,String,String,String,String)
++ Formulario responderPergunta(int,String,int)
++ void deletarPergunta(int)
++ ArrayList<Formulario> listarPerguntas()
+}
+
+
+class br.com.fiap.steelpulse.infrastructure.exceptions.InfraestruturaException {
++ <<Create>> InfraestruturaException(String)
+}
+
+class br.com.fiap.steelpulse.infrastructure.api.rest.AgendamentoRestController {
+- AgendamentoController agendamentoController
++ <<Create>> AgendamentoRestController(AgendamentoController)
++ Response create(AgendamentoInputDto)
++ Response confirmarAgendamento(int)
++ Response deletarAgendamento(int)
++ Response listarAgendamentosPorUsuario(int)
++ Response listarAgendamentos()
+}
+
+
+class br.com.fiap.steelpulse.mapper.FormularioMapper {
++ {static} FormularioOutputDto toDto(Formulario)
+}
+
+class br.com.fiap.steelpulse.domain.model.Paciente {
+- int userId
+- String name
+- String email
+- String senha
+- boolean isFuncionario
++ <<Create>> Paciente()
++ <<Create>> Paciente(int,String,String,String)
++ <<Create>> Paciente(int,String,String,String,boolean)
++ boolean isFuncionario()
++ void setFuncionario(boolean)
++ int getUserId()
++ void setUserId(int)
++ String getName()
++ void setName(String)
++ String getEmail()
++ void setEmail(String)
++ String getSenha()
++ void setSenha(String)
+}
+
+
+class br.com.fiap.steelpulse.dto.input.AutenticacaoInputDto {
+- int id
+- Date dataAcesso
+- int idPagina
+- int idUsuario
++ <<Create>> AutenticacaoInputDto(int,Date,int,int)
++ int getIdUsuario()
++ int getId()
++ void setId(int)
++ Date getDataAcesso()
++ int getIdPagina()
+}
+
+
+interface br.com.fiap.steelpulse.domain.repository.AutenticacaoRepository {
+~ Autenticacao criarAcesso(Autenticacao)
+~ Autenticacao editarAcesso(Autenticacao,int)
+~ void deletarAcesso(int)
+~ ArrayList<Autenticacao> listarAcesso()
+~ ArrayList<Autenticacao> listarByIdUsuario(int)
+}
+
+class br.com.fiap.steelpulse.dto.input.RespostaInputDto {
+- String corpo
+- int autorDaResposta
++ <<Create>> RespostaInputDto(String,int)
++ String getCorpo()
++ void setCorpo(String)
++ int getAutorDaReposta()
++ void setAutorDaReposta(int)
+}
+
+
+class br.com.fiap.steelpulse.application.exceptions.CredencialException {
++ <<Create>> CredencialException(String)
+}
+
+interface br.com.fiap.steelpulse.infrastructure.persistence.DatabaseConnection {
+~ Connection getConnection()
+}
+
+class br.com.fiap.steelpulse.application.AgendamentoServiceImpl {
+- AgendamentoRepository agendamentoRepository
++ <<Create>> AgendamentoServiceImpl(AgendamentoRepository)
++ Agendamento getAgendamento(int)
++ Agendamento criarAgendamento(String,int,Date)
++ ArrayList<Agendamento> listarAgendamentos()
++ void deletarAgendamento(int)
++ void confirmarAgendamento(int)
++ List<Agendamento> listarAgendamentosPorUsuario(int)
+}
+
+
+class br.com.fiap.steelpulse.dto.output.AutenticacaoOutputDto {
+- int id
+- Date dataAcesso
+- int idPagina
+- int idUsuario
++ <<Create>> AutenticacaoOutputDto(int,Date,int,int)
++ <<Create>> AutenticacaoOutputDto(Date,int)
++ int getIdUsuario()
++ void setIdUsuario(int)
++ int getId()
++ void setId(int)
++ Date getDataAcesso()
++ void setDataAcesso(Date)
++ int getIdPagina()
++ void setIdPagina(int)
+}
+
+
+interface br.com.fiap.steelpulse.domain.repository.FormularioRepository {
+~ ArrayList<Formulario> listarPerguntas()
+~ void deletarPergunta(int)
+~ Formulario responderPergunta(int,String,int)
+~ Formulario criarPergunta(String,String,Date,String,String,String)
+}
+
+
+
+br.com.fiap.steelpulse.interfaces.AgendamentoController <|.. br.com.fiap.steelpulse.interfaces.AgendamentoControllerImpl
+br.com.fiap.steelpulse.domain.repository.PacienteRepository <|.. br.com.fiap.steelpulse.infrastructure.persistence.JdbcPacienteRepository
+br.com.fiap.steelpulse.domain.service.FormularioService <|.. br.com.fiap.steelpulse.application.FormularioServiceImpl
+br.com.fiap.steelpulse.application.service.ApiKeyValidator <|.. br.com.fiap.steelpulse.infrastructure.security.ApiKeyValidatorImpl
+br.com.fiap.steelpulse.infrastructure.persistence.DatabaseConnection <|.. br.com.fiap.steelpulse.infrastructure.persistence.DatabaseConnectionImpl
+br.com.fiap.steelpulse.domain.repository.AutenticacaoRepository <|.. br.com.fiap.steelpulse.infrastructure.persistence.JdbcAutenticacaoRepository
+br.com.fiap.steelpulse.infrastructure.exceptions.RuntimeException <|-- br.com.fiap.steelpulse.infrastructure.exceptions.LoginException
+br.com.fiap.steelpulse.infrastructure.exceptions.RuntimeException <|-- br.com.fiap.steelpulse.infrastructure.exceptions.AgendamentoException
+jakarta.ws.rs.container.ContainerRequestFilter <|.. br.com.fiap.steelpulse.infrastructure.security.ApiKeyFilter
+br.com.fiap.steelpulse.domain.service.AutenticacaoService <|.. br.com.fiap.steelpulse.application.AutenticacaoServiceImpl
+br.com.fiap.steelpulse.interfaces.AutenticacaoController <|.. br.com.fiap.steelpulse.interfaces.AutenticacaoControllerImpl
+br.com.fiap.steelpulse.infrastructure.exceptions.RuntimeException <|-- br.com.fiap.steelpulse.infrastructure.exceptions.ListagemDePacienteException
+br.com.fiap.steelpulse.domain.repository.AgendamentoRepository <|.. br.com.fiap.steelpulse.infrastructure.persistence.JdbcAgendamentoRepository
+br.com.fiap.steelpulse.interfaces.PacienteController <|.. br.com.fiap.steelpulse.interfaces.PacienteControllerImpl
+br.com.fiap.steelpulse.domain.repository.FormularioRepository <|.. br.com.fiap.steelpulse.infrastructure.persistence.JdbcFormularioRepository
+br.com.fiap.steelpulse.infrastructure.exceptions.RuntimeException <|-- br.com.fiap.steelpulse.infrastructure.exceptions.AutenticacaoException
+br.com.fiap.steelpulse.domain.service.PacienteService <|.. br.com.fiap.steelpulse.application.PacienteServiceImpl
+br.com.fiap.steelpulse.infrastructure.exceptions.RuntimeException <|-- br.com.fiap.steelpulse.infrastructure.exceptions.FormularioException
+br.com.fiap.steelpulse.interfaces.FormularioController <|.. br.com.fiap.steelpulse.interfaces.FormularioControllerImpl
+br.com.fiap.steelpulse.infrastructure.exceptions.Throwable <|-- br.com.fiap.steelpulse.infrastructure.exceptions.InfraestruturaException
+br.com.fiap.steelpulse.application.exceptions.RuntimeException <|-- br.com.fiap.steelpulse.application.exceptions.CredencialException
+br.com.fiap.steelpulse.domain.service.AgendamentoService <|.. br.com.fiap.steelpulse.application.AgendamentoServiceImpl
+@enduml
